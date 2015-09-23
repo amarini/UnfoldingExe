@@ -204,5 +204,93 @@ if True:
 
 canv3.SaveAs("gen-unfold.pdf")
 
+##################### UNFOLDING STUDIES###########
+histos=[]
+gooderrors=[]
+colors=[ROOT.kRed+2,ROOT.kRed,ROOT.kRed-2,ROOT.kBlue-2, ROOT.kBlue,ROOT.kBlue+2,ROOT.kGreen+2,ROOT.kGreen,ROOT.kGreen-2, ROOT.kMagenta-2,ROOT.kMagenta,ROOT.kMagenta+2]
+canv4 = ROOT.TCanvas("c4","c4",800,800)
+SetCanvasStyle(canv4)
+reco_fluct.Draw("HIST")
+reco_fluct.SetLineStyle(3)
+reco_fluct.GetYaxis().SetRangeUser(-50,450)
 
+if True:
+	leg = ROOT.TLegend(0.64,.55,.95,.90)
+	SetLegendStyle(leg)
+
+for reg in range(0,Nbins/2):
+	u = ROOT.RooUnfoldSvd(R,reco_fluct, 2*reg )
+	h = u.Hreco(ROOT.RooUnfold.kCovToy) 
+	h.SetName( "unfoldSvd_%d"%reg )
+	c=colors.pop()
+	colors = [c] + colors
+	h.SetLineColor( c )
+	h.SetMarkerColor( c )
+	histos.append( h )
+	gooderrors.append( h )
+	h.Draw("PE SAME")
+	leg.AddEntry(h,h.GetName() )
+
+leg.Draw()
+canv4.SaveAs("unfold-svd-reg.pdf")
+
+canv5 = ROOT.TCanvas("c5","c5",800,800)
+SetCanvasStyle(canv5)
+
+u=ROOT.RooUnfoldSvd(R,reco_fluct, 30 )
+u.Hreco(ROOT.RooUnfold.kNone)
+print "Check ->",u,"->",u.Impl(),"->",u.Impl().GetD()
+h=u.Impl().GetD()
+h.Draw()
+
+canv5.SaveAs("unfold-svd-ddistr.pdf")
+
+
+canv6 = ROOT.TCanvas("c6","c6",800,800)
+SetCanvasStyle(canv6)
+reco_fluct.Draw("HIST")
+if True:
+	leg = ROOT.TLegend(0.64,.55,.95,.90)
+	SetLegendStyle(leg)
+
+for reg in [1,5,10,100,1000,10000]:
+	u = ROOT.RooUnfoldBayes(R,reco_fluct,reg)
+	if reg< 15:
+		h = u.Hreco(ROOT.RooUnfold.kCovToy)
+		gooderrors.append( h )
+	else:
+		h = u.Hreco(ROOT.RooUnfold.kNone)
+	h.SetName( "unfoldBayes_%d"%reg )
+	c=colors.pop()
+	colors=[c]+colors
+	h.SetLineColor( c )
+	h.SetMarkerColor( c )
+	histos.append( h )
+	if reg< 15:
+		h.Draw("PE SAME")
+	else:
+		h.Draw("HIST SAME")
+	leg.AddEntry(h,h.GetName() )
+leg.Draw()
+
+canv6.SaveAs("unfold-bayes-reg.pdf")
+
+########### Draw Relative error -before -after unfolding
+canv7 = ROOT.TCanvas("c7","c7",800,800)
+SetCanvasStyle(canv7)
+axis=ROOT.TH1D("axis","axis",Nbins,0,10)
+axis.Draw("AXIS")
+axis.GetYaxis().SetRangeUser(0,10)
+if True:
+	leg = ROOT.TLegend(0.64,.55,.95,.90)
+	SetLegendStyle(leg)
+for h in gooderrors:
+	for b in range(0,h.GetNbinsX()):
+		e = h.GetBinError(b+1)
+		e2= reco_fluct.GetBinError(b+1)
+		h.SetBinContent( b+1, e/e2)
+	h.Draw("HIST SAME")
+	leg.AddEntry(h,h.GetName() )
+leg.Draw()
+canv7.SaveAs("unfold-error-reg.pdf")
 raw_input("ok?")
