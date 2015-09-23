@@ -164,7 +164,7 @@ ROOT.gSystem.Load("${HOME}/Downloads/RooUnfold-1.1.1/libRooUnfold.so")
 R = ROOT.RooUnfoldResponse(None,None,resp)
 u = ROOT.RooUnfoldInvert(R,reco)
 u.SetName("unfolder1")
-h = u.Hreco(ROOT.RooUnfold.kNone) ##  error propagation down with toys
+h = u.Hreco(ROOT.RooUnfold.kNone) 
 h.SetName("unfold")
 
 ## for meaningful errors
@@ -174,7 +174,7 @@ for j in range(0,reco.GetNbinsX() ):
 u2 = ROOT.RooUnfoldInvert(R,reco_fluct)
 u2.SetName("unfolder2")
 u2.SetNToys(1000)
-h2 = u2.Hreco( ROOT.RooUnfold.kCovToy)
+h2 = u2.Hreco( ROOT.RooUnfold.kCovToy)##  error propagation down with toys
 h2.SetName("unfold2")
 
 h.SetMarkerStyle(20)

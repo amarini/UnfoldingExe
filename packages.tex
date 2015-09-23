@@ -1,0 +1,42 @@
+
+\usepackage[english]{babel}
+%FloatBarrier
+\usepackage{placeins}
+%H
+\usepackage{float}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage[pdftex,hyperfootnotes=false,pdfpagelabels,pagebackref]{hyperref}
+
+% to make a analitical index/glossaries
+%\usepackage[acronym,xindy,nonumberlist]{glossaries}
+\usepackage[acronym,nonumberlist]{glossaries}
+%\usepackage{makeidx}
+\makeglossaries
+%\makeindex
+
+%caption
+%\usepackage[font=small,format=plain,labelfont=bf,margin=0.05\columnwidth]{caption}
+\usepackage[font=small,format=plain,labelfont=bf,margin=0.05\columnwidth]{caption}
+
+
+%%%% DEFINE COMMANDS %%%%%%%%%%%
+\newcommand{\meas} {\ensuremath \vec{y}}
+\newcommand{\truth}{\ensuremath \vec{x}_\textup{T}}
+\newcommand{\resp} {\ensuremath \mathbf{R}}
+\newcommand{\back} {\ensuremath \vec{b}}
+
+\newcommand{\respt}{\ensuremath \mathbf{\tilde{R}}}
+\newcommand{\strength}{\ensuremath \vec{\mu} } 
+
+\newcommand{\mc}{\ensuremath \vec{x}_\textup{MC}}
+%% I version
+\newcommand{\truthI}[1]{\ensuremath x^\textup{T}_{#1}}
+\newcommand{\strengthI}[1]{\ensuremath \mu_{#1} }
+\newcommand{\mcI}[1]{\ensuremath x^\textup{MC}_{#1}}
+\newcommand{\respI}[2]{\ensuremath R_{#1,#2} }
+\newcommand{\resptI}[2]{\ensuremath \tilde{R}_{#1,#2} }
+
+%%%  Draft
+\newcommand{\fixme}[1]{ \mbox{\bf{FIXME:} \it{#1}} } 

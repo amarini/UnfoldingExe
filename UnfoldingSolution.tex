@@ -4,13 +4,8 @@
 \author{ACM}
 \date{\today}
 
-\usepackage{placeins}
-\usepackage{amsmath,amssymb,amsfonts}
-\usepackage{graphicx}
-\usepackage{amsmath}
-
-%%%  Draft
-\newcommand{\fixme}[1]{ \mbox{\bf{FIXME:} \it{#1}} } 
+\input{packages}
+\input{acronyms}
 
 \begin{document}
 \maketitle
@@ -25,21 +20,25 @@ ROOT.gSystem.Load("${HOME}/Downloads/RooUnfold-1.1.1/libRooUnfold.so")
 R = ROOT.RooUnfoldResponse(None,None,resp)
 u = ROOT.RooUnfoldInvert(R,reco)
 u.SetName("unfolder1")
-h = u.Hreco(ROOT.RooUnfold.kNone) ##  error propagation down with toys
+h = u.Hreco(ROOT.RooUnfold.kNone) 
 h.SetName("unfold")
+
+## for meaningful errors
+fluct=1.0
+for j in range(0,reco.GetNbinsX() ):
+	reco_fluct.SetBinError(j+1,fluct)
 
 u2 = ROOT.RooUnfoldInvert(R,reco_fluct)
 u2.SetName("unfolder2")
 u2.SetNToys(1000)
-h2 = u2.Hreco( ROOT.RooUnfold.kCovToy)
+h2 = u2.Hreco( ROOT.RooUnfold.kCovToy) ##  error propagation down with toys
 h2.SetName("unfold2")
 
 \end{verbatim}
 
 The result is shown in figure~\ref{fig:sol1}: the unfolded distribution with no-fluctuations should be by-construction identical to the one used for generating it; 
 small differences may be due to the numeric precision of the floating point representation inside a computer, that act as a fluctuation smearing. 
-The one that had fluctuations inside, nevertheless is the maximum-likelihood (ML) estimator and therefore the best linear unbiased estimator (BLUE), has a very huge variance.
-\fixme{Need to give them an error if we use gaus ones}
+The one that had fluctuations inside, nevertheless is the \gls{ML} estimator and therefore the \gls{BLUE}, has a very huge variance.
 
 \begin{figure}[H]
 	\centering
