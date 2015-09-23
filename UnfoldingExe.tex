@@ -1,0 +1,90 @@
+\documentclass[a4paper,11pt]{article}
+
+\title{Exercize on unfolding distributions}
+\author{ACM}
+\date{\today}
+
+%%
+\include{difficulty}
+
+\usepackage{placeins}
+\usepackage{amsmath,amssymb,amsfonts}
+%%
+\newcommand{\meas} {\ensuremath \vec{y}}
+\newcommand{\truth}{\ensuremath \vec{x}_\textup{T}}
+\newcommand{\resp} {\ensuremath \mathbf{R}}
+\newcommand{\back} {\ensuremath \vec{b}}
+
+\newcommand{\respt}{\ensuremath \mathbf{\tilde{R}}}
+\newcommand{\strength}{\ensuremath \vec{\mu} } 
+
+\newcommand{\mc}{\ensuremath \vec{x}_\textup{MC}}
+%% I version
+\newcommand{\truthI}[1]{\ensuremath x^\textup{T}_{#1}}
+\newcommand{\strengthI}[1]{\ensuremath \mu_{#1} }
+\newcommand{\mcI}[1]{\ensuremath x^\textup{MC}_{#1}}
+\newcommand{\respI}[2]{\ensuremath R_{#1,#2} }
+\newcommand{\resptI}[2]{\ensuremath \tilde{R}_{#1,#2} }
+
+%%%  Draft
+\newcommand{\fixme}[1]{ \mbox{\bf{FIXME:} \it{#1}} } 
+
+\begin{document}
+\maketitle
+\section{Introduction}
+Unfolding is the ``art'' of being able to undo detector effects, such as smearings, efficiencies or background contaminations.
+Unfolding techniques refers to a set of statistical tools explained in many books such as Ref.~\cite{Cowan}, 
+or summurized in short letter and articles \cite{Cowan:unfolding}. 
+Different software suites provede an implementation of such methods; 
+in particle physics one of the most spread is {\scshape RooUnfold} \cite{RooUnfold}, 
+which can be used within the {\scshape root} software. \fixme{citation needed}
+
+The basic idea behind unfolding is the fact that (at least on certain observables) detector acts linearly on the shapes; this is the case for example for cross-section measurements, where the observables is the total number of event registered in the detector.
+The equation we will encounter is the following:
+\begin{equation}
+	\meas= \respt \cdot \truth + \back
+	\label{eqn:base}
+\end{equation}
+it means that the measured spectra ($\meas$) can be obtained by a smearing and efficiency ($\respt$) applied on the truth distribution ($\truth$). To that a possible background ($\back$) can be added to the measured distribution; this background can come from different sources, like different processes, but also different region of the phase-space where the smearings effects can lead to migration inside the region of interest.
+
+Equation~\ref{eqn:base} can come in different shapes, one of the most relevant is the rescaling of it with respect to a particular truth/prediction \cite{SVD}:
+\begin{equation}
+	\meas = \resp \cdot \strength + \back
+\end{equation}
+where $\strengthI{i} = \frac{\truthI{i}}{\mcI{i}} $ and  $\respI{i}{j} = \resptI{i}{j} \cdot \mcI{i} $, making the content of the response matrix $\resp$ the actual number of expected events.
+
+\subsection{Code and Software}
+In HEP the most widespread code is {\scshape root} (and {PyRoot}) with the additional package of {\scshape RooUnfold}.
+
+\section{Understanding unfolding}
+\difficulty{2}
+The first point of understand how unfolding operate is to deal with the smearing of the distribution.
+Suppose to have a fully efficient detector that has just a poor gaussian resolution, as given in the attachments:
+\begin{enumerate}
+	\item Write the inversion method to unfold the distribution without random fluctuations
+	\item Use the inversion method to unfold the distirbution with random fluctuations
+	\item discuss the result.
+\end{enumerate}
+\begin{figure}[Hh!]
+	\includegraphics[width=0.49\textwidth]{figs/respt.pdf}
+	\includegraphics[width=0.49\textwidth]{figs/reco.pdf}
+	\caption{
+		\label{fig:exe1}
+		Left: smearing matrix ($\respt$) 
+		Right: reconstructed distributions with and without random fluctuations.
+	}	
+\end{figure}
+\FloatBarrier
+
+
+%%%%%%%%%%%%%%%%%%%% BIBLIO %%%%%%%%%%%%%%%%%%%%%%
+\FloatBarrier
+\nocite{*}
+%\bibliographystyle{acm}
+\bibliographystyle{acmunsrt}
+%\addcontentsline{toc}{section}{\refname}
+\bibliography{UnfoldingExe}
+%%%%%%%%%%%%%%%%%%
+\cleardoublepage
+
+\end{document}

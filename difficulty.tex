@@ -1,0 +1,22 @@
+\usepackage{bbding}
+\usepackage{ifthen}
+\usepackage{graphicx}
+\usepackage{amsmath}
+%
+\setlength{\parindent}{0pt}
+
+\newcommand{\difficulty}[1]
+                {
+                \vspace{-30pt}
+                \begin{flushright}
+                \mbox{
+                \ifthenelse{ #1 = 1 }{\FiveStar \FiveStarOpen \FiveStarOpen \FiveStarOpen \FiveStarOpen} {}
+                \ifthenelse{ #1 = 2 }{\FiveStar \FiveStar \FiveStarOpen \FiveStarOpen \FiveStarOpen} {}
+                \ifthenelse{ #1 = 3 }{\FiveStar \FiveStar \FiveStar \FiveStarOpen \FiveStarOpen} {}
+                \ifthenelse{ #1 = 4 }{\FiveStar \FiveStar \FiveStar \FiveStar \FiveStarOpen} {}
+                \ifthenelse{ #1 = 5 }{\FiveStar \FiveStar \FiveStar \FiveStar \FiveStar} {}
+                }
+                \end{flushright}
+                }
+
+

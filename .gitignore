@@ -124,3 +124,10 @@ sympy-plots-for-*.tex/
 # WinEdt
 *.bak
 *.sav
+
+# Mac
+.DS_Store
+
+#Targets
+UnfoldingExe.pdf
+UnfoldingSolution.pdf
