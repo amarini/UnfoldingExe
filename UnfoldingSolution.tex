@@ -65,15 +65,16 @@ The regularization parameter is a \emph{choice} to make.
 There is no right and wrong value, but some wanted features are:
 \begin{itemize}
 	\item stability of the regularization with respect to the chosen regularization parameter.
-	\item for the \gls{SVD}-method look at the $d_i$ distribution.
+	\item for the \gls{SVD}-method look at the $d_i$ distribution; in this case it shows that after $~10$ the distribution is random.
 	\item error estimation after the unfolding should not be smaller than the one before it.
+	\item use different predictions (if available) to evaluate possible biases.
 \end{itemize}
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.49\textwidth]{figs/unfold-svd-ddistr.pdf}
 	\includegraphics[width=0.49\textwidth]{figs/unfold-error-reg.pdf}
-	\caption{ \label{fig:sol:reg2} Left: d-distribution for the \gls{SVD}-method. Right: ratio of the error before and after the unfolding.}
+	\caption{ \label{fig:sol:reg2} Left: $d_i$-distribution for the \gls{SVD}-method. Right: ratio of the error before and after the unfolding.}
 \end{figure}
 
 \FloatBarrier

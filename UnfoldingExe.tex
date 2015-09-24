@@ -75,7 +75,18 @@ Using the histogram with fluctuations of the exercize above:
 
 What it usually happens is that response matrixes are built from event-based \gls{MC} simulation.
 In this section you are asked to unfold a given distribution, constructing before the response matrix.
+
+Event-based \gls{MC} simulations, 
+if produced with different luminosity than the one delivered by the machine, needs to be reweighted 
+in order to have the correct \emph{cross-section} and \emph{luminosity} of the data we are comparing to,
+Moreover, it is common practice to increase the number of event produced in the \gls{MC} simulation in ``interesting'' 
+region of the phase space, therefore these weights cannot be assumed uniform.
+
 Unfortunately, the \gls{MC} simulation is not-perfect and needs to be corrected for small effects.
+Typically these are small scale-factors measured with techinques like the \emph{tag-and-probe}. 
+This type of weights are aimed to correct the difference in efficiency observed in the different objects 
+and are assumed to be uncorrelated.
+
 
 %%%%%%%%%%%%%%%%%%%% BIBLIO %%%%%%%%%%%%%%%%%%%%%%
 \FloatBarrier
