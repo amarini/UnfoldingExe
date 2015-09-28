@@ -11,11 +11,11 @@ rand = ROOT.TRandom3(123456)
 
 ### Create a tree
 fSol = ROOT.TFile.Open("Sol2.root","RECREATE")
-hGen = ROOT.TH1D("gen","gen",200,0,100)
+hGen = ROOT.TH1D("gen","gen",100,0,100)
 
 fExe = ROOT.TFile.Open("Exe2.root","RECREATE")
 t = ROOT.TTree("events","events")
-hData = ROOT.TH1D("data","data",200,0,100)
+hData = ROOT.TH1D("data","data",100,0,100)
 
 l1 = {}
 l2 = {}
@@ -138,7 +138,8 @@ x = array('d',[0])
 y = array('d',[0])
 z = array('d',[0])
 
-for i in range(0,Nentries):
+for iEntry in range(0,Nentries):
+	print "\rReading entry","%5d"%(iEntry),"/",Nentries, "--","%.2f"%(float(iEntry)/Nentries * 100.),"%",
 	#generate pt1	
 	llPt = fPt.GetRandom();
 	llEta = fY.GetRandom();
@@ -168,7 +169,7 @@ for i in range(0,Nentries):
 	lA.Boost(b);	
 	lB.Boost(b);
 	
-	## print "Event",i,":"
+	## print "Event",iEntry,":"
 	## print "\t x,y,z",x[0],y[0],z[0]
 	## print "\t Z Pt=",llPt
 	## print "\t Z Phi=",llPhi
@@ -287,6 +288,7 @@ for i in range(0,Nentries):
 for i in range(0,hData.GetNbinsX() ):
 	c= hData.GetBinContent( i+1)
 	hData.SetBinContent(i+1,rand.Poisson(c) ) 
+	hData.SetBinError(i+1, ROOT.TMath.Sqrt(hData.GetBinContent(i+1)) ) 
 
 ### Write and Close
 fExe.cd()

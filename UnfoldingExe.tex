@@ -1,6 +1,6 @@
 \documentclass[a4paper,11pt]{article}
 
-\title{Exercize on unfolding distributions}
+\title{Exercise on unfolding distributions}
 \author{ACM}
 \date{\today}
 
@@ -14,10 +14,10 @@
 \maketitle
 
 \section{Introduction}
-Unfolding is the ``art'' of being able to undo detector effects, such as smearings, efficiencies or background contaminations.
+Unfolding is the ``art'' of being able to undo detector effects, such as smearings, efficiencies or background contamination.
 Unfolding techniques refers to a set of statistical tools explained in many books such as Ref.~\cite{Cowan}, 
-or summurized in short letter and articles \cite{Cowan:unfolding}. 
-Different software suites provede an implementation of such methods; 
+or summarized in short letter and articles \cite{Cowan:unfolding}. 
+Different software suites provide an implementation of such methods; 
 in particle physics one of the most spread is {\scshape RooUnfold} \cite{RooUnfold}, 
 which can be used within the {\scshape root} software \cite{ROOT}. 
 
@@ -29,7 +29,7 @@ The equation we will encounter is the following:
 \end{equation}
 it means that the measured spectra ($\meas$) can be obtained by a smearing and efficiency ($\respt$) applied on the truth distribution ($\truth$). To that a possible background ($\back$) can be added to the measured distribution; this background can come from different sources, like different processes, but also different region of the phase-space where the smearings effects can lead to migration inside the region of interest.
 
-Equation~\ref{eqn:base} can come in different shapes, one of the most relevant is the rescaling of it with respect to a particular truth/prediction \cite{SVD}:
+Equation~\ref{eqn:base} can come in different shapes, one of the most relevant is the re-scaling of it with respect to a particular truth/prediction \cite{SVD}:
 \begin{equation}
 	\meas = \resp \cdot \strength + \back
 \end{equation}
@@ -42,10 +42,10 @@ In HEP the most widespread code is {\scshape root} (and {PyRoot}) with the addit
 \difficulty{2}
 
 The first point of understand how unfolding operate is to deal with the smearing of the distribution.
-Suppose to have a fully efficient detector that has just a poor gaussian resolution of $0.4 a.u.$, as given in the attachments:
+Suppose to have a fully efficient detector that has just a poor Gaussian resolution of $0.4 a.u.$, as given in the attachments:
 \begin{enumerate}
 	\item Write the inversion method to unfold the distribution without random fluctuations
-	\item Use the inversion method to unfold the distirbution with random fluctuations in the attachment; these are obtained with a gaussian smearing of $1.0$ event.
+	\item Use the inversion method to unfold the distribution with random fluctuations in the attachment; these are obtained with a Gaussian smearing of $1.0$ event.
 	\item discuss the result.
 \end{enumerate}
 \begin{figure}[H]
@@ -62,8 +62,8 @@ Suppose to have a fully efficient detector that has just a poor gaussian resolut
 \section{Regularization}
 \difficulty{3}
 
-The most used regularization methods are the iterative-method based on the Bayes' theorem \cite{dAgostini} and the Tickonov regularization, which is implemented efficiently with the \gls{SVD} decomposition \cite{SVD}.
-Using the histogram with fluctuations of the exercize above:
+The most used regularization methods are the iterative-method based on the Bayes' theorem \cite{dAgostini} and the Tikhonov regularization, which is implemented efficiently with the \gls{SVD} decomposition \cite{SVD}.
+Using the histogram with fluctuations of the exercise above:
 \begin{enumerate}
 	\item provide an unfolded distribution with the different regularization parameters.
 	\item discuss the effect and the limits of the regularization parameter in the two methods.
@@ -73,21 +73,21 @@ Using the histogram with fluctuations of the exercize above:
 \section{Constructing a Response Matrix}
 \difficulty{4}
 
-What it usually happens is that response matrixes are built from event-based \gls{MC} simulation.
+What it usually happens is that response matrices are built from event-based \gls{MC} simulation.
 In this section you are asked to unfold a given distribution, constructing before the response matrix.
 
 Event-based \gls{MC} simulations, 
-if produced with different luminosity than the one delivered by the machine, needs to be reweighted 
+if produced with different luminosity than the one delivered by the machine, needs to be re-weighted 
 in order to have the correct \emph{cross-section} and \emph{luminosity} of the data we are comparing to,
 Moreover, it is common practice to increase the number of event produced in the \gls{MC} simulation in ``interesting'' 
 region of the phase space, therefore these weights are not constant.
 
 Unfortunately, the \gls{MC} simulation is not-perfect and needs to be corrected for small effects.
-Typically these are small \emph{scale-factors} measured with techinques like the \emph{tag-and-probe}. 
+Typically these are small \emph{scale-factors} measured with techniques like the \emph{tag-and-probe}. 
 This type of weights are aimed to correct the difference in efficiency observed in the different objects 
 and are assumed to be uncorrelated between the objects.
 
-The scope of this exercize is to simulate the unfolding of a $p_{T}^{Z}$ distribution with the $\mathrm{Z}$ boson deacaying into a $\mu$-pair.
+The scope of this exercise is to simulate the unfolding of a $p_{T}^{Z}$ distribution with the $\mathrm{Z}$ boson decaying into a $\mu$-pair.
 In the {\scshape root} file you will find:
 \begin{itemize}
 	\item The $p_\textup{T}$,$\eta$,$\phi$ of the two muons generated and reconstructed; units are in GeV, and $c=1$

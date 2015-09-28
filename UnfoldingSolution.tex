@@ -16,7 +16,7 @@ The Unfolded spectra can be found using, eg, RooUnfold:
 \begin{verbatim}
 ROOT.gSystem.Load("${HOME}/Downloads/RooUnfold-1.1.1/libRooUnfold.so")
 ##  prepare the response matrix
-# assume a flat prior
+# assume a flat prior, no eff, no bkg
 R = ROOT.RooUnfoldResponse(None,None,resp)
 u = ROOT.RooUnfoldInvert(R,reco)
 u.SetName("unfolder1")
@@ -55,11 +55,11 @@ We start studying regularization to see the effect that it has on the distributi
 	\centering
 	\includegraphics[width=0.49\textwidth]{figs/unfold-bayes-reg.pdf}
 	\includegraphics[width=0.49\textwidth]{figs/unfold-svd-reg.pdf}
-	\caption{ \label{fig:sol:reg} The unfolded distribution for different regularization parameters. On the left, the iterative unfolding, on the right the Tickonov regularization. }
+	\caption{ \label{fig:sol:reg} The unfolded distribution for different regularization parameters. On the left, the iterative unfolding, on the right the Tikhonov regularization. }
 \end{figure}
 
 For the iterative method based on Bayes' theorem the regularization is given by the number of iteration; the less iterations the closer the unfolded distribution to the prior we choose, usually obtained from \gls{MC}. The method will converge to the \gls{ML} solution with the increasing number of iterations.
-For the \gls{SVD} implementation of the Tikonov regularization, the regularization is given by the number of singular values used in the inversion. The less singular values, the more the distribution is regularized. Using ``all'' the singular values we get close the \gls{ML} solution.
+For the \gls{SVD} implementation of the Tikhonov regularization, the regularization is given by the number of singular values used in the inversion. The less singular values, the more the distribution is regularized. Using ``all'' the singular values we get close the \gls{ML} solution.
 
 The regularization parameter is a \emph{choice} to make. 
 There is no right and wrong value, but some wanted features are:
@@ -82,7 +82,8 @@ There is no right and wrong value, but some wanted features are:
 
 The response matrix can be constructed in the following steps:
 
-1)  Define a flag to identify if the event is in the fiducial region at the measured/truth level:
+\begin{enumerate}
+\item  Define a flag to identify if the event is in the fiducial region at the measured/truth level:
 \begin{verbatim}
         isGen = t.lep1PtTruth >=15 and t.lep2PtTruth >= 15 \  
                 and abs(t.lep1EtaTruth )<2.5 and abs(t.lep2EtaTruth) <2.5
@@ -90,36 +91,50 @@ The response matrix can be constructed in the following steps:
                 and abs(t.lep1EtaReco )<2.5 and abs(t.lep2EtaReco) <2.5
 \end{verbatim}
 
-2) Compute the scale factor as product of the two lepton scale factors.
+\item Compute the scale factor as product of the two lepton scale factors.
 
-3) Fill the gen histogram if is generated:
+\item Define the reconstructed TLorentzVector using the muon mass ($m_\mu \approx 0.105$ GeV ), and from the leptons the $Z$ ones at generator level ($Z$) and at reconstruction level ($LL$)
+
+\item Fill the gen histogram if it is in the fiducial volume at generator level:
 \begin{verbatim}
         if isGen: hTruth.Fill(Z.Pt(), t.weight ) # no sf
 \end{verbatim}
 
-4) Fill the reconstructed level with the scale factors
+\item Fill the reconstructed level with the scale factors, if it is in the fiducial volume at reconstruction level
 \begin{verbatim}
         if isReco: hReco.Fill( LL.Pt(), t.weight * mysf)
 \end{verbatim}
 
-5) Fill the smearing matrix iff both level are matched:
+\item Fill the smearing matrix if both level are matched:
 \begin{verbatim}
         if isGen and isReco:hMatrix.Fill(LL.Pt(),Z.Pt(),t.weight*mysf)
 \end{verbatim}
 
-
-6) Unfold the distribution, eg:
+\item Unfold the distribution, eg:
 \begin{verbatim}
         R = ROOT.RooUnfoldResponse(hReco,hTruth,hMatrix)
-        u = ROOT.RooUnfoldBayes(R,hData,5)
+        R.UseOverflow()
+        u = ROOT.RooUnfoldBayes(R,hData,20)
 \end{verbatim}
+\end{enumerate}
 
-Results can be seen in figure~\ref{fig:sol:exe2}, along of a couple of poissible mistakes.
+Results can be seen in figure~\ref{fig:sol:exe2}, along of a couple of possible mistakes:
+the not correct application of the scale-factors will result in a generally low yield under the peak (green) because the efficiencies assumed by the unfolding are slightly wrong, while the non application of the \gls{MC}-weights (magenta) will make the unfold distribution sensitive to the way this weights are produced, that for this particular case are correlated with the $p_{T}^{Z}$ and produces spikes in the points corresponding to the changes of these weights ($p_{T}^{Z} = 10, 20, 50$ GeV). 
+Finally, neglecting the overflow bins, does not allow the unfolding to correctly compute the migration in from events having $p_{T}^{Z}> 100$ GeV, resulting in a small wiggle at $100$ GeV. An other possible way to consider the last effect is to include in the background and efficiency terms ( \verb@isGen = isGen && Z.Pt() <100@, \verb@isReco = isReco &&  LL.Pt() <100@), being a little more model-dependent, since this bins are completely taken from the \gls{MC} instead of only the migrations.
 
 \begin{figure}[H]
 	\centering 
 	\includegraphics[width=.95\textwidth]{figs2/unfolding2.pdf}
-	\caption{ \label{fig:sol:exe2} Unfolded distribution (solid black dots) compared to the reconstructed data distribution (empty dots). Underlying can be seen the distribution used to generate the data, prior poisson fluctuations (red), and two examples of wrongly unfolded distributions (dashed): the first without applying scale-factors (green), the second considering no weights at all (magenta).
+	\caption{ \label{fig:sol:exe2} Unfolded distribution (solid black dots) compared to the reconstructed data distribution (empty dots). Underlying can be seen the distribution used to generate the data, prior Poisson fluctuations (red), and two examples of wrongly unfolded distributions (dashed): the first without applying scale-factors (green), the second considering no weights at all (magenta), and the third (cyan) without including the overflow and underflow bins.
+	}
+\end{figure}
+
+The constructed unfold matrix is:
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.49\textwidth]{figs2/matrix.pdf}
+	\includegraphics[width=0.49\textwidth]{figs2/bkg.pdf}
+	\caption{The smearing matrix ($\mathbf{R}$) used in the unfolding (left), and the background component ($\vec{b}$) compared to the expected distribution corrected for scale factor efficiencies (right).
 	}
 \end{figure}
 
