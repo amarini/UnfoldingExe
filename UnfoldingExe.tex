@@ -80,13 +80,47 @@ Event-based \gls{MC} simulations,
 if produced with different luminosity than the one delivered by the machine, needs to be reweighted 
 in order to have the correct \emph{cross-section} and \emph{luminosity} of the data we are comparing to,
 Moreover, it is common practice to increase the number of event produced in the \gls{MC} simulation in ``interesting'' 
-region of the phase space, therefore these weights cannot be assumed uniform.
+region of the phase space, therefore these weights are not constant.
 
 Unfortunately, the \gls{MC} simulation is not-perfect and needs to be corrected for small effects.
-Typically these are small scale-factors measured with techinques like the \emph{tag-and-probe}. 
+Typically these are small \emph{scale-factors} measured with techinques like the \emph{tag-and-probe}. 
 This type of weights are aimed to correct the difference in efficiency observed in the different objects 
-and are assumed to be uncorrelated.
+and are assumed to be uncorrelated between the objects.
 
+The scope of this exercize is to simulate the unfolding of a $p_{T}^{Z}$ distribution with the $\mathrm{Z}$ boson deacaying into a $\mu$-pair.
+In the {\scshape root} file you will find:
+\begin{itemize}
+	\item The $p_\textup{T}$,$\eta$,$\phi$ of the two muons generated and reconstructed; units are in GeV, and $c=1$
+	\item An event weight given by the \gls{MC}-simulation. 
+	\item A data distribution to unfold.
+\end{itemize}
+
+The following fiducial cuts must be applied on both muons:
+\begin{itemize}
+	\item $p_\textup{T}^\mu >15 $ GeV 
+	\item $|\eta^\mu| < 2.5 $
+\end{itemize}
+
+The \emph{scale-factors} ( $\varepsilon_\textup{DATA} / \varepsilon_\textup{MC}$) for the muons efficiencies (scalefactors.txt):
+\begin{verbatim}
+## pt1 pt2 eta1 eta2 sf
+0 10 -5 -2 0.9
+0 10 -2 0 0.9
+0 10 0 2 0.9
+0 10 2 5 0.9
+10 20 -5 -2 0.8
+10 20 -2 0 0.8
+10 20 0 2 0.8
+10 20 2 5 0.95
+20 50 -5 -2 0.93
+20 50 -2 0 0.89
+20 50 0 2 0.979
+20 50 2 5 0.96
+50 10000 -5 -2 0.88
+50 10000 -2 0 1.0
+50 10000 0 2 1.01
+50 10000 2 5 0.96
+\end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%% BIBLIO %%%%%%%%%%%%%%%%%%%%%%
 \FloatBarrier

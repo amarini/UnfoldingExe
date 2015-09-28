@@ -79,4 +79,48 @@ There is no right and wrong value, but some wanted features are:
 
 \FloatBarrier
 \section{Construct the response matrix}
+
+The response matrix can be constructed in the following steps:
+
+1)  Define a flag to identify if the event is in the fiducial region at the measured/truth level:
+\begin{verbatim}
+        isGen = t.lep1PtTruth >=15 and t.lep2PtTruth >= 15 \  
+                and abs(t.lep1EtaTruth )<2.5 and abs(t.lep2EtaTruth) <2.5
+        isReco = t.lep1PtReco >=15 and t.lep2PtReco >= 15  
+                and abs(t.lep1EtaReco )<2.5 and abs(t.lep2EtaReco) <2.5
+\end{verbatim}
+
+2) Compute the scale factor as product of the two lepton scale factors.
+
+3) Fill the gen histogram if is generated:
+\begin{verbatim}
+        if isGen: hTruth.Fill(Z.Pt(), t.weight ) # no sf
+\end{verbatim}
+
+4) Fill the reconstructed level with the scale factors
+\begin{verbatim}
+        if isReco: hReco.Fill( LL.Pt(), t.weight * mysf)
+\end{verbatim}
+
+5) Fill the smearing matrix iff both level are matched:
+\begin{verbatim}
+        if isGen and isReco:hMatrix.Fill(LL.Pt(),Z.Pt(),t.weight*mysf)
+\end{verbatim}
+
+
+6) Unfold the distribution, eg:
+\begin{verbatim}
+        R = ROOT.RooUnfoldResponse(hReco,hTruth,hMatrix)
+        u = ROOT.RooUnfoldBayes(R,hData,5)
+\end{verbatim}
+
+Results can be seen in figure~\ref{fig:sol:exe2}, along of a couple of poissible mistakes.
+
+\begin{figure}[H]
+	\centering 
+	\includegraphics[width=.95\textwidth]{figs2/unfolding2.pdf}
+	\caption{ \label{fig:sol:exe2} Unfolded distribution (solid black dots) compared to the reconstructed data distribution (empty dots). Underlying can be seen the distribution used to generate the data, prior poisson fluctuations (red), and two examples of wrongly unfolded distributions (dashed): the first without applying scale-factors (green), the second considering no weights at all (magenta).
+	}
+\end{figure}
+
 \end{document}
