@@ -7,7 +7,7 @@ ROOT.gStyle.SetOptTitle(0)
 from array import array
 
 #random number generator
-rand = ROOT.TRandom3(123456)
+rand = ROOT.TRandom3(1234567)
 
 ### Create a tree
 fSol = ROOT.TFile.Open("Sol2.root","RECREATE")
@@ -282,10 +282,71 @@ for iEntry in range(0,Nentries):
 
 ## create a background TODO
 
-#put a bump in data ?  TODO
+#put a bump/bias in data ?  
+fSol.cd()
+hGen_noBump = hGen.Clone("gen_noBump")
+hData_noBump = hData.Clone("data_noBump")
+
+bEntries=Nentries/40
+for iEntry in range(0,bEntries):
+	print "\rBumping entry:","%5d"%(iEntry),"/",bEntries, "--","%.2f"%(float(iEntry)/bEntries * 100.),"%",
+	llPt = rand.Gaus(70,5);
+	llEta = fY.GetRandom();
+	llPhi = rand.Uniform(1) *2.0*3.1415 - 3.1415;
+	llM=91;
+	Z= ROOT.TLorentzVector()
+	Z.SetPtEtaPhiM(llPt, llEta, llPhi , llM)
+	b = Z.BoostVector() # get the boost vector
+	lA = ROOT.TLorentzVector()
+	lB = ROOT.TLorentzVector()
+	## sphere
+	rand.Sphere(x,y,z,1) ## 
+	mMu = 0.105
+	lA.SetXYZM( x[0]* llM/2.0, y[0]*llM/2.0, z[0]*llM/2.0, mMu);
+	lB.SetXYZM( -x[0]* llM/2.0, -y[0]*llM/2.0, -z[0]*llM/2.0, mMu);
+	lA.Boost(b);	
+	lB.Boost(b);
+	if lA.Pt() > lB.Pt() :
+		l1.Pt  = lA.Pt()
+		l1.Eta = lA.Eta();
+		l1.Phi = lA.Phi()
+		l2.Pt  = lB.Pt()
+		l2.Eta = lB.Eta();
+		l2.Phi = lB.Phi()
+	else:
+		l2.Pt  = lA.Pt()
+		l2.Eta = lA.Eta();
+		l2.Phi = lA.Phi()
+		l1.Pt  = lB.Pt()
+		l1.Eta = lB.Eta();
+		l1.Phi = lB.Phi()
+	e1D= EfficiencyData(l1.Pt,l1.Eta,event.npv) 
+	e2D= EfficiencyData(l2.Pt,l2.Eta,event.npv)
+	isData1 = False
+	isData2 = False
+	if rand.Uniform() < e1D : isData1 = True
+	if rand.Uniform() < e2D : isData2 = True
+	if l1.Pt >15 and l2.Pt > 15 and abs(l1.Eta ) <2.5 and abs(l2.Eta)<2.5 :
+		hGen.Fill(llPt)
+	if isData1 and isData2:
+		lAPtReco = PtSmear(l1.Pt,l1.Eta)
+		lAEtaReco = EtaSmear(l1.Pt,l1.Eta)
+		lAPhiReco = PhiSmear(l1.Phi)
+		lBPtReco = PtSmear(l2.Pt,l2.Eta)
+		lBEtaReco = EtaSmear(l2.Pt,l2.Eta)
+		lBPhiReco = PhiSmear(l2.Phi)
+		lR1 = ROOT.TLorentzVector()
+		lR1.SetPtEtaPhiM(lAPtReco,lAEtaReco,lAPhiReco,mMu)
+		lR2 = ROOT.TLorentzVector()
+		lR2.SetPtEtaPhiM(lBPtReco,lBEtaReco,lBPhiReco,mMu)
+		llR = lR1 + lR2
+
+		## additional selection
+		if (lR1.Pt() > 15 and lR2.Pt() >15  and abs(lR1.Eta()) <2.5 and abs(lR2.Eta())<2.5 ):
+			hData.Fill( llR.Pt() )
 
 # smear data
-for i in range(0,hData.GetNbinsX() ):
+for i in range(0,hData.GetNbinsX() +1): ## also overflow
 	c= hData.GetBinContent( i+1)
 	hData.SetBinContent(i+1,rand.Poisson(c) ) 
 	hData.SetBinError(i+1, ROOT.TMath.Sqrt(hData.GetBinContent(i+1)) ) 
@@ -298,6 +359,8 @@ fExe.Close()
 
 fSol.cd()
 hGen.Write()
+hGen_noBump.Write()
 fSol.Close()
+
 
 PrintScaleFactor()

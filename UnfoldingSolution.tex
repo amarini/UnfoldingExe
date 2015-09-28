@@ -118,7 +118,8 @@ The response matrix can be constructed in the following steps:
 \end{verbatim}
 \end{enumerate}
 
-Results can be seen in figure~\ref{fig:sol:exe2}, along of a couple of possible mistakes:
+Results can be seen in figure~\ref{fig:sol:exe2}.
+A  couple of possible mistakes are also represented in fig.~\ref{fig:sol:exe2}:
 the not correct application of the scale-factors will result in a generally low yield under the peak (green) because the efficiencies assumed by the unfolding are slightly wrong, while the non application of the \gls{MC}-weights (magenta) will make the unfold distribution sensitive to the way this weights are produced, that for this particular case are correlated with the $p_{T}^{Z}$ and produces spikes in the points corresponding to the changes of these weights ($p_{T}^{Z} = 10, 20, 50$ GeV). 
 Finally, neglecting the overflow bins, does not allow the unfolding to correctly compute the migration in from events having $p_{T}^{Z}> 100$ GeV, resulting in a small wiggle at $100$ GeV. An other possible way to consider the last effect is to include in the background and efficiency terms ( \verb@isGen = isGen && Z.Pt() <100@, \verb@isReco = isReco &&  LL.Pt() <100@), being a little more model-dependent, since this bins are completely taken from the \gls{MC} instead of only the migrations.
 
@@ -126,6 +127,14 @@ Finally, neglecting the overflow bins, does not allow the unfolding to correctly
 	\centering 
 	\includegraphics[width=.95\textwidth]{figs2/unfolding2.pdf}
 	\caption{ \label{fig:sol:exe2} Unfolded distribution (solid black dots) compared to the reconstructed data distribution (empty dots). Underlying can be seen the distribution used to generate the data, prior Poisson fluctuations (red), and two examples of wrongly unfolded distributions (dashed): the first without applying scale-factors (green), the second considering no weights at all (magenta), and the third (cyan) without including the overflow and underflow bins.
+	}
+\end{figure}
+
+The bumpy structuer at $\approx70\,\textup{GeV}$ is a structuer present only in the data distribution but not in the \gls{MC}-model given in the tree.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.49\textwidth]{figs2/bump.pdf}
+	\caption{ \label{fig:sol:bump} A bump structure at $\approx 70\,\textup{GeV}$ added to the data distribution and visible in the unfolded one. The gray line represent the generated sample without such structure used for filling the \gls{MC}-simulation given in the tree.
 	}
 \end{figure}
 
@@ -137,5 +146,6 @@ The constructed unfold matrix is:
 	\caption{The smearing matrix ($\mathbf{R}$) used in the unfolding (left), and the background component ($\vec{b}$) compared to the expected distribution corrected for scale factor efficiencies (right).
 	}
 \end{figure}
+
 
 \end{document}

@@ -121,6 +121,7 @@ hUnfoldWrong2 = u.Hreco(ROOT.RooUnfold.kNone)
 #draw
 fSol = ROOT.TFile.Open("Sol2.root")
 hGen = fSol.Get("gen")
+hGenNoBump = fSol.Get("gen_noBump")
 
 c = ROOT.TCanvas("c","c",800,800)
 hUnfold.SetMarkerStyle(20)
@@ -141,9 +142,9 @@ ymax = hGen.GetMaximum()
 hGen.GetYaxis().SetRangeUser(0, ymax*1.4)
 
 hGen.Draw("HIST")
-hUnfoldWrong1.Draw("HIST SAME")
-hUnfoldWrong2.Draw("HIST SAME")
 hUnfold_noOverflow.Draw("HIST SAME")
+hUnfoldWrong2.Draw("HIST SAME")
+hUnfoldWrong1.Draw("HIST SAME")
 hGen.Draw("HIST SAME")
 hData.Draw("P SAME")
 hUnfold.Draw("PSAME")
@@ -188,10 +189,27 @@ if True:
 	leg2.AddEntry( hReco,"Reconstructed distribution")
 	leg2.Draw()
 
+c5= ROOT.TCanvas("c5","c5",800,800)
+hGenNoBump.SetLineColor(ROOT.kGray)
+hGen.Draw("HIST")
+hGenNoBump.Draw("HIST SAME")
+hData.Draw("P SAME")
+hUnfold.Draw("P SAME")
+if True:
+	leg3 = ROOT.TLegend(.6,.5,.9,.9)
+	leg3.AddEntry( hGen,"gen distribution")
+	leg3.AddEntry( hGenNoBump,"gen distribution in the tree")
+	leg3.AddEntry( hData, "data distribution (obtained from gen)")
+	leg3.AddEntry( hUnfold, "unfolded data")
+	leg3.Draw()
+
+
+
 raw_input("ok?")
 c.SaveAs("unfolding2.pdf")
 c2.SaveAs("eff.pdf")
 c3.SaveAs("bkg.pdf")
 c4.SaveAs("matrix.pdf")
+c5.SaveAs("bump.pdf")
 
 
