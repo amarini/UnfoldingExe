@@ -51,7 +51,7 @@ for j in range(0,reco.GetNbinsX() ):
   #c = reco.GetBinContent(j+1)  ## matrix is already norm
   #reco.SetBinContent(j+1, c/s )  ## normalize to the sum of gen I have
 
-reco_fluct = reco.Clone("reco-fluct")
+reco_fluct = reco.Clone("measured-fluct")
 for j in range(0,reco.GetNbinsX() ):
 	c=reco_fluct.GetBinContent(j+1)
 	if c<0 : print "Warning: negative bin content!"
