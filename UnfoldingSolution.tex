@@ -47,7 +47,7 @@ The one that had fluctuations inside, nevertheless is the \gls{ML} estimator and
 \end{figure}
 
 \FloatBarrier
-\section{Regularization}
+\section{Regularized unfolding}
 Regularization techniques are used to cure the high variance of the distribution, introducing an ad hoc bias. 
 
 We start studying regularization to see the effect that it has on the distributions:
@@ -76,6 +76,14 @@ There is no right and wrong value, but some wanted features are:
 	\includegraphics[width=0.49\textwidth]{figs/unfold-error-reg.pdf}
 	\caption{ \label{fig:sol:reg2} Left: $d_i$-distribution for the \gls{SVD}-method. Right: ratio of the error before and after the unfolding.}
 \end{figure}
+
+The inversion method is the \gls{ML} estimator, and therefore unbiased. If the variance of this method is under control, it is probably a good method to be used. 
+
+The \gls{SVD}-method penalizes distributions accordingly to the curvature they use, therefore it is not suited to unfold rapidly changing distributions expecially with bumps (with respect to the \gls{MC} residuals).
+
+The iterative method will rapidly converge the \gls{ML} solution if a good starting point is used (\gls{MC}). 
+
+Both regularized unfolding method assume a binning (which is an other way of regularize) and uses a migration spectra from the simulation, which may leave some model dependence.
 
 \FloatBarrier
 \section{Construct the response matrix}

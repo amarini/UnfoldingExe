@@ -13,10 +13,10 @@
 \begin{document}
 \maketitle
 
-\section{Introduction}
+\section*{Introduction}
 Unfolding is the ``art'' of being able to undo detector effects, such as smearings, efficiencies or background contamination.
 Unfolding techniques refers to a set of statistical tools explained in many books such as Ref.~\cite{Cowan}, 
-or summarized in short letter and articles \cite{Cowan:unfolding}. 
+or summarized in short letters and articles \cite{Cowan:unfolding}. 
 Different software suites provide an implementation of such methods; 
 in particle physics one of the most spread is {\scshape RooUnfold} \cite{RooUnfold}, 
 which can be used within the {\scshape root} software \cite{ROOT}. 
@@ -27,7 +27,7 @@ The equation we will encounter is the following:
 	\meas= \respt \cdot \truth + \back
 	\label{eqn:base}
 \end{equation}
-it means that the measured spectra ($\meas$) can be obtained by a smearing and efficiency ($\respt$) applied on the truth distribution ($\truth$). To that a possible background ($\back$) can be added to the measured distribution; this background can come from different sources, like different processes, but also different region of the phase-space where the smearings effects can lead to migration inside the region of interest.
+it means that the measured spectra ($\meas$) can be obtained by applying a smearing and efficiency ($\respt$) on the truth distribution ($\truth$). To that a possible background ($\back$) can be added to the measured distribution; this background can come from different sources, like different processes, but also different region of the phase-space where the smearings effects can lead to migration inside the region of interest.
 
 Equation~\ref{eqn:base} can come in different shapes, one of the most relevant is the re-scaling of it with respect to a particular truth/prediction \cite{SVD}:
 \begin{equation}
@@ -35,18 +35,19 @@ Equation~\ref{eqn:base} can come in different shapes, one of the most relevant i
 \end{equation}
 where $\strengthI{i} = \frac{\truthI{i}}{\mcI{i}} $ and  $\respI{i}{j} = \resptI{i}{j} \cdot \mcI{i} $, making the content of the response matrix $\resp$ the actual number of expected events.
 
-\subsection{Code and Software}
-In HEP the most widespread code is {\scshape root} (and {PyRoot}) with the additional package of {\scshape RooUnfold}.
-
 \section{Understanding unfolding}
 \difficulty{2}
 
 The first point of understand how unfolding operate is to deal with the smearing of the distribution.
-Suppose to have a fully efficient detector that has just a poor Gaussian resolution of $0.4 a.u.$, as given in the attachments:
+Suppose to have a fully efficient detector that has just a poor Gaussian resolution of $0.4 a.u.$:
 \begin{enumerate}
-	\item Write the inversion method to unfold the distribution without random fluctuations
-	\item Use the inversion method to unfold the distribution with random fluctuations in the attachment; these are obtained with a Gaussian smearing of $1.0$ event.
-	\item discuss the result.
+	\item Implement the inversion method 
+	\item Use the inversion method to unfold:
+	\begin{enumerate}
+		\item the distribution without random fluctuations (\verb@Exe.root/measured@)
+		\item the distribution with random fluctuations obtained applying a gaussian smearing of $1.0$ (\verb@Exe.root/reco-fluct@)
+	\end{enumerate}
+	\item compare and discuss the results.
 \end{enumerate}
 \begin{figure}[H]
 	\includegraphics[width=0.49\textwidth]{figs/respt.pdf}
@@ -59,41 +60,44 @@ Suppose to have a fully efficient detector that has just a poor Gaussian resolut
 \end{figure}
 \FloatBarrier
 
-\section{Regularization}
+\section{Regularized Unfolding}
 \difficulty{3}
 
-The most used regularization methods are the iterative-method based on the Bayes' theorem \cite{dAgostini} and the Tikhonov regularization, which is implemented efficiently with the \gls{SVD} decomposition \cite{SVD}.
+The most used unfolding methods in \gls{HEP} are the iterative method based on Bayes' theorem \cite{dAgostini} and the \gls{SVD} method \cite{SVD}.
+For the iterative method based on Bayes' theorem the regularization is given by the number of iteration, while for the \gls{SVD} method the regularization parameter is the number of singular values used in the inversion.
+
 Using the histogram with fluctuations of the exercise above:
 \begin{enumerate}
-	\item provide an unfolded distribution with the different regularization parameters.
+	\item provide a graphical representation of the unfolded distribution with different regularization parameters for both algorithms.
 	\item discuss the effect and the limits of the regularization parameter in the two methods.
 	\item discuss how you would choose the regularization parameter.
+	\item discuss the pro and cons of the two methods.
 \end{enumerate}
 
 \section{Constructing a Response Matrix}
 \difficulty{4}
 
-What it usually happens is that response matrices are built from event-based \gls{MC} simulation.
+The scope of this exercise is to simulate the unfolding of a $p_{T}^{Z}$ distribution with the $\mathrm{Z}$ 
+boson decaying into a $\mu$-pair.
+In general the response matrix is built from an event-based \gls{MC} simulation.
 In this section you are asked to unfold a given distribution, constructing before the response matrix.
 
-Event-based \gls{MC} simulations, 
-if produced with different luminosity than the one delivered by the machine, needs to be re-weighted 
-in order to have the correct \emph{cross-section} and \emph{luminosity} of the data we are comparing to,
-Moreover, it is common practice to increase the number of event produced in the \gls{MC} simulation in ``interesting'' 
-region of the phase space, therefore these weights are not constant.
+Event-based \gls{MC} simulations
+are usually produced with different \emph{luminosity} that the one produced by the machine.
+Often it happens that small region of the phase space, interesting for searches and measurements, have an enhanced size. 
 
 Unfortunately, the \gls{MC} simulation is not-perfect and needs to be corrected for small effects.
-Typically these are small \emph{scale-factors} measured with techniques like the \emph{tag-and-probe}. 
-This type of weights are aimed to correct the difference in efficiency observed in the different objects 
-and are assumed to be uncorrelated between the objects.
+Typically these can be small \emph{scale-factors} measured with the \emph{tag-and-probe} method. 
+This type of weights aims to correct the difference in efficiency observed in the objects reconstruction
+and are assumed to be uncorrelated between the different objects.
 
-The scope of this exercise is to simulate the unfolding of a $p_{T}^{Z}$ distribution with the $\mathrm{Z}$ boson decaying into a $\mu$-pair.
-In the {\scshape root} file you will find:
+In the {\scshape root} file (\verb@Exe2.root@) you will find a list of \gls{MC} events inside a tree (\verb@Exe2.root/events@):
 \begin{itemize}
-	\item The $p_\textup{T}$,$\eta$,$\phi$ of the two muons generated and reconstructed; units are in GeV, and $c=1$
+	\item The $p_\textup{T}$, $\eta$, $\phi$ of the two muons generated and reconstructed; 
+	      When not said otherwise units are in GeV ($c=1$).
 	\item An event weight given by the \gls{MC}-simulation. 
-	\item A data distribution to unfold.
 \end{itemize}
+And a data distribution to unfold (\verb@Exe2.root/data@). 
 
 The following fiducial cuts must be applied on both muons:
 \begin{itemize}
@@ -101,26 +105,21 @@ The following fiducial cuts must be applied on both muons:
 	\item $|\eta^\mu| < 2.5 $
 \end{itemize}
 
-The \emph{scale-factors} ( $\varepsilon_\textup{DATA} / \varepsilon_\textup{MC}$) for the muons efficiencies (scalefactors.txt):
-\begin{verbatim}
-## pt1 pt2 eta1 eta2 sf
-0 10 -5 -2 0.9
-0 10 -2 0 0.9
-0 10 0 2 0.9
-0 10 2 5 0.9
-10 20 -5 -2 0.8
-10 20 -2 0 0.8
-10 20 0 2 0.8
-10 20 2 5 0.95
-20 50 -5 -2 0.93
-20 50 -2 0 0.89
-20 50 0 2 0.979
-20 50 2 5 0.96
-50 10000 -5 -2 0.88
-50 10000 -2 0 1.0
-50 10000 0 2 1.01
-50 10000 2 5 0.96
-\end{verbatim}
+The \emph{scale-factors} ( $\varepsilon_\textup{DATA} / \varepsilon_\textup{MC}$) for the muons efficiencies are given in the file 
+\verb@scalefactors.txt@ for the corresponding $\eta$ and $p_\textup{T}$ ranges.
+
+\vspace{1cm}
+
+Provide a {\scshape root} file with:
+\begin{itemize}
+	\item  the set of histogram used for build the response matrix.
+		\begin{itemize}
+			\item \verb@TH1D@ named \verb@matrix_measured@
+			\item \verb@TH1D@ named \verb@matrix_truth@
+			\item \verb@TH2D@ named \verb@matrix_matrix@ (with the truth bins on the $y$-axis and the measured ones on the $x$ axis)
+		\end{itemize}
+	\item  the unfolded distribution of the data, a \verb@TH1D@ with name \verb@data_unfold@
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%% BIBLIO %%%%%%%%%%%%%%%%%%%%%%
 \FloatBarrier
