@@ -195,10 +195,25 @@ for iEntry in range(0,Nentries):
 
 	event.npv = rand.Poisson(10)
 	#efficiency is function of npv ;-)
-	e1MC= EfficiencyMC(l1.Pt,l1.Eta,event.npv) 
-	e2MC= EfficiencyMC(l2.Pt,l2.Eta,event.npv)
-	e1D= EfficiencyData(l1.Pt,l1.Eta,event.npv) 
-	e2D= EfficiencyData(l2.Pt,l2.Eta,event.npv)
+	lAPtReco = PtSmear(l1.Pt,l1.Eta)
+	lAEtaReco = EtaSmear(l1.Pt,l1.Eta)
+	lAPhiReco = PhiSmear(l1.Phi)
+
+	lBPtReco = PtSmear(l2.Pt,l2.Eta)
+	lBEtaReco = EtaSmear(l2.Pt,l2.Eta)
+	lBPhiReco = PhiSmear(l2.Phi)
+
+	# we will apply sf on the reco level, easier
+	#e1MC= EfficiencyMC(l1.Pt,l1.Eta,event.npv) 
+	#e2MC= EfficiencyMC(l2.Pt,l2.Eta,event.npv)
+	#e1D= EfficiencyData(l1.Pt,l1.Eta,event.npv) 
+	#e2D= EfficiencyData(l2.Pt,l2.Eta,event.npv)
+
+	e1MC= EfficiencyMC(lAPtReco,lAEtaReco,event.npv) 
+	e2MC= EfficiencyMC(lBPtReco,lBEtaReco,event.npv)
+	e1D= EfficiencyData(lAPtReco,lAEtaReco,event.npv) 
+	e2D= EfficiencyData(lBPtReco,lBEtaReco,event.npv)
+
 
 	##
 	isReco1=False	
@@ -212,20 +227,12 @@ for iEntry in range(0,Nentries):
 	if rand.Uniform() < e2D : isData2 = True
 
 	#l1.PtReco
-	if isReco1:
-		lAPtReco = PtSmear(l1.Pt,l1.Eta)
-		lAEtaReco = EtaSmear(l1.Pt,l1.Eta)
-		lAPhiReco = PhiSmear(l1.Phi)
-	else:
+	if not isReco1:
 		lAPtReco = 0
 		lAEtaReco = 0
 		lAPhiReco = 0
 
-	if isReco2:
-		lBPtReco = PtSmear(l2.Pt,l2.Eta)
-		lBEtaReco = EtaSmear(l2.Pt,l2.Eta)
-		lBPhiReco = PhiSmear(l2.Phi)
-	else: 
+	if not isReco2:
 		lBPtReco = 0 ;
 		lBEtaReco = 0 ;
 		lBPhiReco = 0 ;
@@ -320,21 +327,28 @@ for iEntry in range(0,bEntries):
 		l1.Pt  = lB.Pt()
 		l1.Eta = lB.Eta();
 		l1.Phi = lB.Phi()
-	e1D= EfficiencyData(l1.Pt,l1.Eta,event.npv) 
-	e2D= EfficiencyData(l2.Pt,l2.Eta,event.npv)
+
+	lAPtReco = PtSmear(l1.Pt,l1.Eta)
+	lAEtaReco = EtaSmear(l1.Pt,l1.Eta)
+	lAPhiReco = PhiSmear(l1.Phi)
+	lBPtReco = PtSmear(l2.Pt,l2.Eta)
+	lBEtaReco = EtaSmear(l2.Pt,l2.Eta)
+	lBPhiReco = PhiSmear(l2.Phi)
+
+	#e1D= EfficiencyData(l1.Pt,l1.Eta,event.npv) 
+	#e2D= EfficiencyData(l2.Pt,l2.Eta,event.npv)
+
+	e1D= EfficiencyData(lAPtReco,lAEtaReco,event.npv) 
+	e2D= EfficiencyData(lBPtReco,lBEtaReco,event.npv)
 	isData1 = False
 	isData2 = False
 	if rand.Uniform() < e1D : isData1 = True
 	if rand.Uniform() < e2D : isData2 = True
+
 	if l1.Pt >15 and l2.Pt > 15 and abs(l1.Eta ) <2.5 and abs(l2.Eta)<2.5 :
 		hGen.Fill(llPt)
+
 	if isData1 and isData2:
-		lAPtReco = PtSmear(l1.Pt,l1.Eta)
-		lAEtaReco = EtaSmear(l1.Pt,l1.Eta)
-		lAPhiReco = PhiSmear(l1.Phi)
-		lBPtReco = PtSmear(l2.Pt,l2.Eta)
-		lBEtaReco = EtaSmear(l2.Pt,l2.Eta)
-		lBPhiReco = PhiSmear(l2.Phi)
 		lR1 = ROOT.TLorentzVector()
 		lR1.SetPtEtaPhiM(lAPtReco,lAEtaReco,lAPhiReco,mMu)
 		lR2 = ROOT.TLorentzVector()

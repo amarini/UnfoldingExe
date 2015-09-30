@@ -57,11 +57,11 @@ for iEntry in range(0,t.GetEntries()):
 	mysf = 1.0
 
 	for pt1,pt2,eta1,eta2,val in sf:
-		if pt1 <= t.lep1PtTruth  and t.lep1PtTruth < pt2  \
-			and eta1 <= t.lep1EtaTruth and t.lep1EtaTruth< eta2:
+		if pt1 <= t.lep1PtReco  and t.lep1PtReco < pt2  \
+			and eta1 <= t.lep1EtaReco and t.lep1EtaReco< eta2:
 			mysf *=val
-		if pt1 <= t.lep1PtTruth  and t.lep1PtTruth < pt2  \
-			and eta1 <= t.lep2EtaTruth and t.lep2EtaTruth< eta2:
+		if pt1 <= t.lep1PtReco  and t.lep1PtReco < pt2  \
+			and eta1 <= t.lep2EtaReco and t.lep2EtaReco< eta2:
 			mysf *=val
 	
 	if isGen:
