@@ -134,7 +134,7 @@ Finally, neglecting the overflow bins, does not allow the unfolding to correctly
 \begin{figure}[H]
 	\centering 
 	\includegraphics[width=.95\textwidth]{figs2/unfolding2.pdf}
-	\caption{ \label{fig:sol:exe2} Unfolded distribution (solid black dots) compared to the reconstructed data distribution (empty dots). Underlying can be seen the distribution used to generate the data, prior Poisson fluctuations (red), and two examples of wrongly unfolded distributions (dashed): the first without applying scale-factors (green), the second considering no weights at all (magenta), and the third (cyan) without including the overflow and underflow bins.
+	\caption{ \label{fig:sol:exe2} Unfolded distribution (solid black dots) compared to the reconstructed data distribution (empty dots). Underlying can be seen the distribution used to generate the data, prior Poisson fluctuations (red), and some examples of wrongly unfolded distributions (dashed): the first without applying scale-factors (green), the second considering no weights at all (magenta), and the third (cyan) without including the overflow and underflow bins.
 	}
 \end{figure}
 
@@ -155,7 +155,7 @@ The constructed unfold matrix is:
 	}
 \end{figure}
 
-The number of events in 
+The number of events generated and recovered with a Bayesian unfolding in the two selections are:
 \begin{table}[H]
 \centering
 \begin{tabular}{lrrr}
@@ -168,5 +168,9 @@ The number of events in
 \end{tabular}
 \caption{number of events generated and reconstructed in the two selections.}
 \end{table}
+
+The absence of the correct overflow handling leads to an excess of event in the $[98,100)$ selection ($439$).
+	On the other hand, a  mistake in the scale-factors ends up in a lower yield in the bins $[10,20)$ (e.g., no-scalefactor $18200$).
+
 
 \end{document}
