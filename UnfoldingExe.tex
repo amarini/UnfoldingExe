@@ -14,62 +14,69 @@
 \maketitle
 
 \section*{Introduction}
-The measured distributions are influenced by detector effects, such as resolution effects, efficiencies, 
+Measured distributions in \gls{HEP} experiments are influenced by detector effects, such as resolution effects, efficiencies, 
 acceptance, non-linearities and background contamination.
-Unfolding aims to undo these effects in order to provide unsmeared distributions that can be directly compared with theory predictions 
+Unfolding aims to undo these effects in order to provide unsmeared distributions that can be directly compared with theoretical predictions 
 or results from other experiments.
 
-Unfolding techniques refer to a set of statistical tools briefly explained in many books such as Ref.~\cite{Cowan}, 
+Unfolding techniques refer to a set of statistical tools explained in many books such as Ref.~\cite{Cowan}, 
 and summarized in short letters and articles \cite{Cowan:unfolding}. 
 
 Different software suites provide an implementation of such methods; 
 in particle physics one widely spread is {\scshape RooUnfold} \cite{RooUnfold}, 
-which can be used within the {\scshape root} software \cite{ROOT}. 
+which can be used within the {\scshape root} software framework \cite{ROOT}. 
 
-The basic idea behind unfolding is the fact that (at least on certain observables) detector acts linearly on the shapes; 
-this is the case for example for cross-section measurements, 
+The basic idea behind unfolding is the fact that (at least on certain observables) detector acts linearly on shapes.
+This is the case for example for cross-section measurements, 
 where the observables are related to the total number of events registered in the detector.
 
 The equation we will encounter is the following:
 \begin{equation}
-	\meas= \respt \cdot \truth + \back
+	\meas= \respt \cdot \truth + \back,
 	\label{eqn:base}
 \end{equation}
-it means that the measured spectra ($\meas$) can be obtained by applying a smearing and efficiency term ($\respt$) on the truth distribution ($\truth$). 
+where the measured spectra ($\meas$) can be obtained by applying a smearing and efficiency term ($\respt$) on the truth distribution ($\truth$). 
 To that a possible background ($\back$) can contaminate the measured distribution;
 backgrounds can come from different sources, 
-like different processes, but also different region of the phase-space 
+like different processes, but also different region of the phase-space,
 where the smearings effects can lead to migration inside the region of interest.
 
-Equation~\ref{eqn:base} can come in different shapes, 
-one of the most relevant is the re-scaling of it with respect to a particular truth/prediction \cite{SVD}:
+Equation~\ref{eqn:base} can come in different variations.
+One of the most relevant is the re-scaling with respect to a particular truth/prediction \cite{SVD}:
 \begin{equation}
-	\meas = \resp \cdot \strength + \back
+	\meas = \resp \cdot \strength + \back,
 \end{equation}
 where $\strengthI{i} = \frac{\truthI{i}}{\mcI{i}} $ and  $\respI{i}{j} = \resptI{i}{j} \cdot \mcI{i} $, 
 making the content of the response matrix $\resp$ the actual number of expected events.
+
+The files required to complete this exercise can be found in \url{https://amarini.web.cern.ch/amarini/UnfoldingExercise/}:
+\begin{itemize}
+	\item \url{https://amarini.web.cern.ch/amarini/UnfoldingExercise/Exe.root}
+	\item \url{https://amarini.web.cern.ch/amarini/UnfoldingExercise/Exe2.root}
+	\item \url{https://amarini.web.cern.ch/amarini/UnfoldingExercise/scalefactors.txt}
+\end{itemize}
 
 \section{Understanding unfolding}
 \difficulty{2}
 
 In order to understand how unfolding operates, the first step is to deal with the smearing of the distributions.
-Suppose to have a fully efficient detector that has just a poor Gaussian resolution of $0.4\,a.u.$:
+We assume to have a fully efficient detector that has just a poor Gaussian resolution of $0.4$ in arbitrary units:
 \begin{enumerate}
-	\item Implement the inversion method 
-	\item Use the inversion method to unfold:
+	\item implement the inversion method 
+	\item use the inversion method to unfold:
 	\begin{enumerate}
 		\item the distribution without random fluctuations (\verb@Exe.root/measured@)
 		\item the distribution with random fluctuations obtained applying a gaussian smearing of $1.0$ (\verb@Exe.root/measured-fluct@)
 	\end{enumerate}
-	\item compare and discuss the results.
+	\item Compare and discuss the results
 \end{enumerate}
 \begin{figure}[H]
 	\includegraphics[width=0.49\textwidth]{figs/respt.pdf}
 	\includegraphics[width=0.49\textwidth]{figs/reco.pdf}
 	\caption{
 		\label{fig:exe1}
-		Left: smearing matrix ($\respt$) 
-		Right: reconstructed distributions with and without random fluctuations.
+		\Left{} Smearing matrix ($\respt$) 
+		\Right{} Reconstructed distributions with and without random fluctuations.
 	}	
 \end{figure}
 \FloatBarrier
@@ -94,14 +101,14 @@ Using the histogram with fluctuations of the exercise above:
 The scope of this exercise is to simulate the unfolding of a $p_{T}^{Z}$ distribution with the $\mathrm{Z}$ 
 boson decaying into a $\mu$-pair.
 In general the response matrix is built from an event-based \gls{MC} simulation.
-In this section the goal is to unfold a given distribution, constructing before the response matrix.
+%In this section the goal is to unfold a given distribution, constructing before the response matrix.
 
 Event-based \gls{MC} simulations
-are usually produced with different \emph{luminosity} that the one produced by the machine.
-Often it happens that small region of the phase space that are interesting for searches and measurements have an enhanced size, 
+are usually produced with different \emph{luminosity} that the one produced by the experiment.
+Often it happens that small region of the phase space that are interesting for searches and measurements have an enhanced number in simulated events, 
 leading to different per event weights.
 
-Unfortunately, the \gls{MC} simulation is not perfect and needs to be corrected for small effects.
+Unfortunately, the \gls{MC} simulation is not perfect and needs to be corrected.
 Typically these can be \emph{scale-factors} measured with the \emph{tag-and-probe} method. 
 This type of weights aims to correct the difference in efficiency observed in the objects reconstruction
 and are assumed to be uncorrelated between the different objects.
@@ -123,20 +130,24 @@ The following fiducial cuts must be applied on both muons:
 The \emph{scale-factors} ($\varepsilon_\textup{DATA} / \varepsilon_\textup{MC}$) for the muons efficiencies are given in the file 
 \verb@scalefactors.txt@ for the corresponding $\eta$ and $p_\textup{T}$ ranges.
 
-\vspace{1cm}
+%%\begin{enumerate}
+%%	\item Provide a {\scshape root} file with:
+%%		\begin{itemize}
+%%		\item the set of histogram used to build the response matrix.
+%%			\begin{itemize}
+%%			\item \verb@TH1D@ named \verb@matrix_measured@
+%%			\item \verb@TH1D@ named \verb@matrix_truth@
+%%			\item \verb@TH2D@ named \verb@matrix_matrix@ (with the truth bins on the $y$-axis and the measured ones on the $x$ axis)
+%%			\end{itemize}
+%%		\item  the unfolded distribution of the data, a \verb@TH1D@ with name \verb@data_unfold@
+%%		\end{itemize}
+%%	\item explain how you get the response matrixes, the unfolded distribution and the errors associated.
+%%\end{enumerate}
 
 \begin{enumerate}
-	\item Provide a {\scshape root} file with:
-		\begin{itemize}
-		\item the set of histogram used to build the response matrix.
-			\begin{itemize}
-			\item \verb@TH1D@ named \verb@matrix_measured@
-			\item \verb@TH1D@ named \verb@matrix_truth@
-			\item \verb@TH2D@ named \verb@matrix_matrix@ (with the truth bins on the $y$-axis and the measured ones on the $x$ axis)
-			\end{itemize}
-		\item  the unfolded distribution of the data, a \verb@TH1D@ with name \verb@data_unfold@
-		\end{itemize}
 	\item explain how you get the response matrixes, the unfolded distribution and the errors associated.
+	\item provide a graphical representation of the unfolded distribution
+	\item give the number of unfolded events between $[10,20)$, and between $[98,100)$
 \end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%% BIBLIO %%%%%%%%%%%%%%%%%%%%%%

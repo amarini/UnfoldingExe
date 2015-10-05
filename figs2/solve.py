@@ -104,24 +104,72 @@ R = ROOT.RooUnfoldResponse(hReco,hTruth,hMatrix)
 R.UseOverflow()
 u = ROOT.RooUnfoldBayes(R,hData,nReg)
 #u = ROOT.RooUnfoldInvert(R,hData)
+mUnfold = u.Ereco(ROOT.RooUnfold.kCovToy)
 hUnfold = u.Hreco(ROOT.RooUnfold.kCovToy)
 hUnfold.SetName("hUnfold")
+
+#
+u = ROOT.RooUnfoldInvert(R,hData)
+hInvert = u.Hreco(ROOT.RooUnfold.kCovToy)
+hInvert.SetName("hInvert")
+mInvert = u.Ereco(ROOT.RooUnfold.kCovToy)
 
 ### Wrong 1
 R = ROOT.RooUnfoldResponse(hReco,hTruthWrong1,hMatrix)
 R.UseOverflow()
 u = ROOT.RooUnfoldBayes(R,hData,nReg)
 hUnfoldWrong1 = u.Hreco(ROOT.RooUnfold.kNone)
+hUnfoldWrong1.SetName("hUnfoldWrong1")
 ## Wrong 2
 R = ROOT.RooUnfoldResponse(hRecoWrong2,hTruthWrong2,hMatrixWrong2)
 R.UseOverflow()
 u = ROOT.RooUnfoldBayes(R,hData,nReg)
 hUnfoldWrong2 = u.Hreco(ROOT.RooUnfold.kNone)
+hUnfoldWrong2.SetName("hUnfoldWrong2")
 
 #draw
-fSol = ROOT.TFile.Open("Sol2.root")
+fSol = ROOT.TFile.Open("Sol2.root","UPDATE")
 hGen = fSol.Get("gen")
 hGenNoBump = fSol.Get("gen_noBump")
+
+## WRITE
+if True:
+	hUnfold.Write()
+	hInvert.Write()
+	hUnfoldWrong1.Write()
+	hUnfoldWrong2.Write()
+	hUnfold_noOverflow.Write()
+	# write the respones matrix
+	hMatrix.Write()
+	hTruth.Write()
+	hReco.Write()
+
+	## cov matrixes
+	mInvert.Write("cov_Invert")
+	mUnfold.Write("cov_Unfold")
+
+	sol=open("sol.txt","w")
+	names = ["hUnfold","hUnfoldWrong1","hUnfoldWrong2","hGen","hGenNoBump","hInvert","hUnfold_noOverflow"]
+	for (bound0,bound1) in [ (10,20), (98,100) ]:
+	   for name in names:
+		cmd0 = "integral="+name + ".Integral("+ name +".FindBin(%d),"%bound0 + name +".FindBin(%d)-1"%bound1  +")"
+		exec(cmd0)
+		print>>sol,  name + ": %d - %d : %f"%(bound0,bound1, integral)
+
+		if name == 'hUnfold' or name == "hInvert":
+			base = name [1:]
+			overflow=1
+			exec("cond=m%s.GetNrows() == %s.GetNbinsX()"%(base,name) )
+			if  cond:
+				overflow=0
+				print "WARNING, no overflow in the matrix:",base
+			error = 0
+			exec("bin0 = %s.FindBin(bound0) + overflow"% name)
+			exec("bin1 = %s.FindBin(bound1) -1 + overflow"%name)
+			for i in range(bin0,bin1+1):
+			   for j in range(bin0,bin1+1):
+			       exec("error += m%s(i,j)"%base )
+			print >>sol, "       +/- %f"% ROOT.TMath.Sqrt(error)
 
 c = ROOT.TCanvas("c","c",800,800)
 hUnfold.SetMarkerStyle(20)
